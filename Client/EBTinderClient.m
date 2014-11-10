@@ -86,7 +86,7 @@
                            completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
                                
                                NSDictionary *dict;
-                              
+                               
                                if (data) {
                                    
                                    NSError *error = nil;
@@ -94,6 +94,7 @@
                                }
                                
                                if (dict && dict[@"token"]) {
+                                   
                                    self.currentUser.xAuthToken = dict[@"token"];
                                    [self parseUser:self.currentUser fromDictionary:dict[@"user"]];
                                    block(YES);
@@ -103,19 +104,6 @@
                                    
                                    NSLog(@"failed to log into tinder %@", data);
                                    
-                                   HRAlertView *alert = [[HRAlertView alloc] initWithTitle:@"Authentication"
-                                                                                   message:@"There is an issue with your login, please try again"
-                                                                                  delegate:nil
-                                                                         cancelButtonTitle:@"Retry"
-                                                                         otherButtonTitles:nil, nil];
-                                   [alert showWithCompletion:^(UIAlertView *alertView, NSInteger buttonIndex) {
-                                       
-                                       dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-//                                           [self tinderAuthentication:block];
-                                       });
-                                       
-                                   }];
-                                   
                                    if (block) block (NO);
                                    
                                }else if(connectionError){
@@ -123,18 +111,7 @@
                                    NSLog(@"network connection error, failed to authenticate with tinder");
                                    if (block) block (NO);
                                    
-                                   HRAlertView *alert = [[HRAlertView alloc] initWithTitle:@"Authentication"
-                                                                                   message:@"There is an issue with your login, please check your connection and try again"
-                                                                                  delegate:nil
-                                                                         cancelButtonTitle:@"Retry"
-                                                                         otherButtonTitles:nil, nil];
-                                   [alert showWithCompletion:^(UIAlertView *alertView, NSInteger buttonIndex) {
-                                       
-                                       dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                                           [self tinderAuthentication:block];
-                                       });
-                                       
-                                   }];
+                                   [self tinderAuthentication:block];
                                    
                                }
                                
@@ -169,7 +146,7 @@
                                        
                                        if (![self.recommendations containsObject:recommendation]) {
                                            [collection addObject:recommendation];
-
+                                           
                                        }
                                    }
                                    [self.recommendations addObjectsFromArray:collection];
@@ -276,7 +253,7 @@
                                        
                                    }else{
                                        user.match = @NO;
-
+                                       
                                    }
                                    if (block) block (YES);
                                }else{
@@ -316,7 +293,7 @@
     user.bio = [dict[@"bio"] description];
     user.gender = dict[@"gender"];
     user.tinderID = [dict[@"_id"] description];
-//    user.birthDay = [dict[@"birth_date"] description]; /* Parse date here*/
+    //    user.birthDay = [dict[@"birth_date"] description]; /* Parse date here*/
     
     if ([dict[@"discoverable"] description] ) {
         user.discoverable = [dict valueForKey:@"discoverable"];
@@ -337,7 +314,7 @@
     
     NSArray *photos = dict[@"photos"];
     NSMutableSet *photoSet = [NSMutableSet new];
-
+    
     [user removePhotos:user.photos];
     for (id aPhoto in photos) {
         
@@ -379,7 +356,7 @@
     return [dateFormatter dateFromString:date];
 }
 - (NSMutableArray *)matches {
-   
+    
     if (!_matches) {
         _matches = [NSMutableArray new];
     }
